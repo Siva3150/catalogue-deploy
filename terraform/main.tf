@@ -11,7 +11,7 @@ resource "aws_lb_target_group" "catalogue" {
       timeout             = 5
       path                = "/health"
       port                = 8080
-      matcher = "200-299
+      matcher = "200-299"
   }
 }
 
