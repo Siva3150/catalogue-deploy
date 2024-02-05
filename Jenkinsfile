@@ -6,16 +6,17 @@ pipeline {
     }
     // environment { 
     //     packageVersion = ''
-    //     nexusURL = '172.31.5.95:8081'
+    //     nexusURL = '172.31.15.124:8081'
     // }
     options {
         timeout(time: 1, unit: 'HOURS')
         disableConcurrentBuilds()
-         ansiColor('xterm')
+        ansiColor('xterm')
     }
     parameters {
         string(name: 'version', defaultValue: '', description: 'What is the artifact version?')
         string(name: 'environment', defaultValue: 'dev', description: 'What is environment?')
+    }
     // build
     stages {
         stage('Print version') {
@@ -27,7 +28,7 @@ pipeline {
             }
         }
 
-         stage('Init') {
+        stage('Init') {
             steps {
                 sh """
                     cd terraform
@@ -36,7 +37,16 @@ pipeline {
             }
         }
 
-         stage('Apply') {
+        stage('Plan') {
+            steps {
+                sh """
+                    cd terraform
+                    terraform plan -var-file=${params.environment}/${params.environment}.tfvars -var="app_version=${params.version}"
+                """
+            }
+        }
+
+        stage('Apply') {
             steps {
                 sh """
                     cd terraform
@@ -44,7 +54,7 @@ pipeline {
                 """
             }
         }
-
+        
     }
     // post build
     post { 
